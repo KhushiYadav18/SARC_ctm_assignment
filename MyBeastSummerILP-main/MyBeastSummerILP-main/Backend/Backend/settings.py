@@ -111,8 +111,12 @@ WSGI_APPLICATION = "Backend.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+         'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ilp_backend_db',  # Your database name
+        'USER': 'ilp_user',  # New PostgreSQL user
+        'PASSWORD': '123',  # User password
+        'HOST': 'localhost',  # Change if using a remote server
+        'PORT': '5432',  # Default PostgreSQL port
     }
 }
 
