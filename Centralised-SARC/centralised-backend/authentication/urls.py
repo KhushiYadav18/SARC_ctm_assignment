@@ -9,3 +9,4 @@ urlpatterns = [
     path('profile/', ProfileView.as_view(), name='profile'),
      path("verify-email/<uuid:token>/", VerifyEmailView.as_view(), name="verify-email"),
 ]
+
