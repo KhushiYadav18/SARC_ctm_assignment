@@ -1,0 +1,230 @@
+body {
+    overflow-x: hidden;
+}
+
+.team {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 300px;
+    height: 50px;
+    flex-shrink: 0;
+    border-radius: 10vw;
+    background: #3D52D5;
+    box-shadow: 0px 0px 3px 7px #FFF;
+    margin: 2vh auto;
+    margin-top: -60vh;
+}
+
+.text {
+    text-align: center;
+    color: #BDD4E7;
+    font-family: Inter;
+    font-size: 33px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    margin: 0;
+}
+
+.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.cards {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2vw;
+    flex-direction: column;
+}
+
+.ctm {
+    width: 22vw;
+    height: 22vw;
+    flex-shrink: 0;
+    border: 0.4vw solid #FFF;
+    background: white;
+    box-shadow: 0px 0px 3px 7px rgba(0, 0, 0, 0.25);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    object-fit: cover !important;
+}
+
+.profile img,
+.ctm img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.ctm .title{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 0.5rem;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    text-align: center;
+    font-size: 1rem;
+}
+
+/* .ctm .title {
+    text-align: center;
+    color: white;
+    margin-top: 0.5rem;
+} */
+
+.split-screen {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100vw;
+    height: auto;
+    overflow: hidden;
+    margin-bottom: 10vh;
+    margin-top: -50vh;
+}
+
+.left-half,
+.right-half {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: none;
+    margin: 0 7vh;
+    padding: 1vh;
+}
+
+.profile {
+    width: 14vw;
+    height: 14vw;
+    margin: 1vh 1vw;
+    border: 0.3vw solid #FFF;
+    background: #8F8989;
+    box-shadow: 0px 0px 3px 7px rgba(0, 0, 0, 0.25);
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+.profile1{
+    width: 12vw;
+    height: 12vw;
+}
+
+.profile img{
+    object-fit: cover;
+    width: 200%;
+    height: 200%;
+}
+
+.profile .title{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 0.5rem;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    text-align: center;
+    font-size: 1rem;
+}
+
+/* .profile .title {
+    text-align: center;
+    color: white;
+    margin-top: 0.5rem;
+} */
+
+.coordis {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 4vh 0;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+}
+
+.footer {
+    background-color: #333;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.social-icons {
+    margin: 10px 0;
+}
+
+.social-icons a {
+    color: white;
+    margin: 0 10px;
+    font-size: 24px;
+}
+
+.phone {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 0.5rem;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    text-align: center;
+    font-size: 0.8rem;
+}
+
+@media screen and (max-width: 768px){
+    .coordis{
+        display: flex;
+        flex-direction: column;
+    }
+    .team{
+        margin-top: -85vh;
+        width: 180px;
+        height: 40px;
+        font-size: 25px;
+        box-shadow: 0px 0px 3px 5px #FFF;
+    }
+    .split-screen{
+        margin-top: -85vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .profile{
+        border-radius: 0;
+        width: 200px;
+        height: 200px;
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
+    .row{
+        flex-direction: column;
+    }
+    .ctm{
+        width: 200px;
+        height: 200px;
+        border-radius: 0%;
+    }
+    
+}

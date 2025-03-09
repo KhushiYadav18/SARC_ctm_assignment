@@ -1,0 +1,63 @@
+.project-card-container {
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+    width: 90vw;
+    margin-bottom: 10vh;
+    background-color: #003936;
+  }
+  
+  .project-card-left {
+    flex: 1;
+    padding: 10px;
+    background-color: #185956;
+    color: white;
+    border-radius: 5px;
+    text-align: center;
+  }
+  
+  .project-card-right {
+    flex: 2;
+    padding: 10px;
+    text-align: left;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .problem-statement {
+    font-weight: bold;
+    color: white;
+  }
+  
+  button {
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    padding: 15px 20px;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+
+
+  @media screen and (max-width: 600px){
+    .project-card-container{
+        flex-direction: column;
+        width: 95vw;
+    }
+
+    .projectsContainer{
+        margin: 0;
+        padding: 5vw;
+        margin-top: 10vh;
+    }
+    
+  }

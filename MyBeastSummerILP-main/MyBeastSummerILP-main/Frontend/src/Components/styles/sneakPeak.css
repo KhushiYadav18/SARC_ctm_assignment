@@ -1,0 +1,74 @@
+.container{
+	border-top-left-radius: 25px;
+	border-top-right-radius: 25px;
+  	background-color: #6175f86a;
+	box-shadow: 0 2px 3px rgb(255, 255, 255);
+  }
+
+  .container h4{
+	font-size: 25px;
+  }
+
+  .container btn{
+	margin-top: 10vh;
+  }
+
+
+  h4:hover{
+	color: aqua;
+	/* transform : scale(1.15); */
+  }
+
+
+/* .card {
+	max-width: 500px;
+	margin: auto;
+	text-align: center;
+	border-radius: 10px;
+	height: 450px;
+  } */
+
+
+.img-area{
+	border-radius: 10px 10px 0 0;
+	height: 200px;
+	background-size: cover;
+	background-position: center center;
+}
+
+
+h4 {
+	color: #fff;
+	font-size: 35px;
+	line-height: 1.5;
+	margin: 15px 0;
+	font-family: 'Bebas Neue', cursive;
+	
+}
+
+
+.card p{
+	font-size: 17px;
+}
+
+.container {
+  padding: 2px 16px;
+  height: 280px;
+}
+
+
+.carousel-item{
+	width: 35% !important;
+}
+
+
+.carousel{
+	height: 60% !important;
+}
+@media screen and (max-width: 600px){
+	.carousel-item{
+		width: 70% !important;
+		padding-left: 20px;
+		margin-left: -90px;
+	}
+}

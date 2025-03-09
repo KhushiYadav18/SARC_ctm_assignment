@@ -1,0 +1,92 @@
+.faq-container {
+    color: white;
+    padding: 20px;
+  }
+  
+  .faq-header {
+    background-color: #38dbdb;
+    margin: 10vh 38vw;
+    margin-top: -10vh;
+    border-radius: 10vw;
+    box-shadow: 0px 0px 3px 7px #FFF;
+    padding: 0px;
+    text-align: center;
+    font-size: 33px;
+    color: black;
+    width: 15vw;
+  }
+  
+  .faqs {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .faq-item {
+    color: black;
+    background-color: #BDD4E7;
+    ;
+    margin: 10px 5vw;
+    padding: 10px;
+
+    border-radius: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .faq-item.open {
+    background-color:#BDD4E7;
+    ;
+  }
+  
+  .question {
+    font-weight: bold;
+  }
+  
+  .answer {
+    margin-top: 10px;
+  }
+ 
+        .card-carousel {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 300px;
+          overflow: hidden;
+          position: relative;
+        }
+    
+        .card {
+          background-color: #fff;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          padding: 20px;
+          width: 200px;
+          height: 240px;
+          margin: 0 10px;
+          transition: transform 0.5s ease-in-out, width 0.5s ease-in-out;
+        }
+    
+        .card.active {
+          width: 300px;
+          height: 360px;
+          transform: scale(1.2);
+        }
+    
+        .card h2 {
+          margin-top: 0;
+        }
+    
+        .card p {
+          margin-bottom: 0;
+        }
+
+@media screen and (max-width: 600px){
+  .faq-header{
+    margin-top: -30vh;
+    margin-left: 25vw;
+    margin-right: 25vw;
+    margin-bottom: 2vh;
+    box-shadow: 0px 0px 3px 5px #FFF;
+    font-size: 25px;
+  }
+}

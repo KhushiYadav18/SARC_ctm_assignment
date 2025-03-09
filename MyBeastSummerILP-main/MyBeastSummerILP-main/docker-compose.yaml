@@ -1,0 +1,33 @@
+version: '2.2'
+
+services:
+  ilpsummerbackend:
+    restart: unless-stopped
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    ports:
+      - "8024:8000"
+    entrypoint: /Backend/wsgi-entrypoint.sh
+    volumes:
+      - ./Backend:/Backend/
+    expose:
+      - 8000
+    networks:
+      - mynetwork
+  
+
+  ilpsummerfrontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5016:5016"
+    volumes:
+      - ./Frontend:/Frontend
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    name: yearbook23_mynetwork

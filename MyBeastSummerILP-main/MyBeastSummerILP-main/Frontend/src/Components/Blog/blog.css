@@ -1,0 +1,20 @@
+.blog {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 95vw;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Example shadow */
+    margin-bottom: 30px;
+    padding: 20px;
+}
+
+
+.interview-schedule-title{
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: white;
+    text-align: left;
+    margin-left: 5vw;
+}

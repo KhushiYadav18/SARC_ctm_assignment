@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "asmp2023"
+version = "0.1.0"
+description = "Beast ASMP"
+authors = ["Akash Banger"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+djangorestframework = "^3.14.0"
+django-cors-headers = "^4.2.0"
+django = "^4.2.4"
+django-allauth = "^0.54.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
