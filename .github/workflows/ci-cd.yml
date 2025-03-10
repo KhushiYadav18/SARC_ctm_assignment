@@ -1,9 +1,6 @@
 name: CI-CD Pipeline
 
-on:
-  push:
-    branches:
-      - khushi
+on: [push]
 
 jobs:
   build:
@@ -42,11 +39,7 @@ jobs:
         run: |
           cd Centralised-SARC/centralised-frontend
           npm install --legacy-peer-deps
-
-      - name: Fix permissions for binaries
-        run: |
-          cd Centralised-SARC/centralised-frontend
-          sudo chmod -R 777 node_modules/.bin
+          chmod -R 777 node_modules/.bin  # Ensure permissions for binaries
 
       - name: Build frontend
         run: |
@@ -63,8 +56,15 @@ jobs:
 
       - name: Install Docker
         run: |
-          curl -fsSL https://get.docker.com | sh
+          sudo apt-get update
+          sudo apt-get install -y docker.io
 
+      - name: Install Docker Compose
+        run: |
+          DOCKER_COMPOSE_VERSION=2.21.0
+          sudo curl -L "https://github.com/docker/compose/releases/download/v$DOCKER_COMPOSE_VERSION/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose version
 
       - name: Deploy to Docker
         run: |
