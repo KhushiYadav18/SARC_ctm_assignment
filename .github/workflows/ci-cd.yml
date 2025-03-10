@@ -38,8 +38,8 @@ jobs:
       - name: Install frontend dependencies
         run: |
           cd Centralised-SARC/centralised-frontend
-          npm install --legacy-peer-deps  # Ensure compatibility with dependencies
-          chmod -R 777 node_modules/.bin  # ✅ Give execute permissions to binaries
+          npm install --legacy-peer-deps
+          chmod -R 777 node_modules/.bin  # Ensure permissions for binaries
 
       - name: Build frontend
         run: |
@@ -53,6 +53,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Install Docker and Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io docker-compose
 
       - name: Deploy to Docker
         run: |
