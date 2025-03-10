@@ -1,0 +1,113 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - khushi
+  pull_request:
+    branches:
+      - khushi
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: 123
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres" 
+          --health-interval=10s 
+          --health-timeout=5s 
+          --health-retries=5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      # Centralised-SARC Project (Backend & Frontend)
+      - name: Install Python dependencies - Centralised-SARC Backend
+        run: |
+          python -m venv env
+          source env/bin/activate
+          pip install --upgrade pip
+          pip install -r Centralised-SARC/centralised-backend/requirements.txt
+
+      - name: Run Backend Tests - Centralised-SARC
+        run: |
+          source env/bin/activate
+          cd Centralised-SARC/centralised-backend
+          python manage.py test
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Node dependencies - Centralised-SARC Frontend
+        run: |
+          cd Centralised-SARC/centralised-frontend
+          npm install --legacy-peer-deps
+
+      - name: Build Frontend - Centralised-SARC
+        run: |
+          cd Centralised-SARC/centralised-frontend
+          npm run build
+
+      - name: Run Linter - Centralised-SARC Frontend
+        run: |
+          cd Centralised-SARC/centralised-frontend
+          npm run lint
+
+      # MyBeastSummerILP Project (Backend & Frontend)
+      - name: Install Python dependencies - MyBeastSummerILP Backend
+        run: |
+          python -m venv env
+          source env/bin/activate
+          pip install --upgrade pip
+          pip install -r "MyBeastSummerILP-main/MyBeastSummerILP-main/Backend/requirements.txt"
+
+      - name: Run Backend Tests - MyBeastSummerILP
+        run: |
+          source env/bin/activate
+          cd "MyBeastSummerILP-main/MyBeastSummerILP-main/Backend"
+          python manage.py test
+
+      - name: Install Node dependencies - MyBeastSummerILP Frontend
+        run: |
+          cd "MyBeastSummerILP-main/MyBeastSummerILP-main/Frontend"
+          npm install --legacy-peer-deps
+
+      - name: Build Frontend - MyBeastSummerILP
+        run: |
+          cd "MyBeastSummerILP-main/MyBeastSummerILP-main/Frontend"
+          npm run build
+
+      - name: Run Linter - MyBeastSummerILP Frontend
+        run: |
+          cd "MyBeastSummerILP-main/MyBeastSummerILP-main/Frontend"
+          npm run lint
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to DockerHub
+        run: |
+          docker-compose down
+          docker-compose up --build -d
