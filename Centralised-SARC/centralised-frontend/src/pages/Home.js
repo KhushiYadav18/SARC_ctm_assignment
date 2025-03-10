@@ -100,9 +100,6 @@ const Home = () => {
         <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
           <p className="text-gray-400">Follow us on social media:</p>
           <div className="flex space-x-4 mt-2">
-            <a href="#" className="text-blue-400 hover:text-blue-300 transition-colors">Facebook</a>
-            <a href="#" className="text-blue-400 hover:text-blue-300 transition-colors">Twitter</a>
-            <a href="#" className="text-blue-400 hover:text-blue-300 transition-colors">LinkedIn</a>
           </div>
         </div>
       </section>
