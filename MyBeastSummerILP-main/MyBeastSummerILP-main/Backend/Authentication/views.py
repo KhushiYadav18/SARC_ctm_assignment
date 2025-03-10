@@ -11,7 +11,7 @@ import smtplib
 import os
 from django.views import View
 from django.http import JsonResponse
-
+from rest_framework.permissions import IsAuthenticated
 
 class CreateUserAPIView(APIView):
     def post(self, request, format=None):
@@ -77,21 +77,30 @@ class Login(APIView):
 
 
 class ProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, format=None):
         if not hasattr(request, 'auth_user'):
             return Response({"error": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        user_data = request.auth_user  # Data from middleware
 
         try:
-            user_data = request.auth_user  # This should now be accessible
-            user = User.objects.get(ldap=user_data['roll_number'])
-            profile = Profile.objects.get(user=user)
+            # Check if user exists in the local database
+            user, created = User.objects.get_or_create(
+                ldap=user_data['roll_number'],
+                defaults={'name': user_data['name']}
+            )
+
+            # Fetch or create the associated profile
+            profile, profile_created = Profile.objects.get_or_create(user=user)
+            
+            # Serialize the profile data
             serializer = ProfileSerializer(profile)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except User.DoesNotExist:
-            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-        except Profile.DoesNotExist:
-            return Response({"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
-
+        
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class ProtectedView(View):
     def get(self, request):
