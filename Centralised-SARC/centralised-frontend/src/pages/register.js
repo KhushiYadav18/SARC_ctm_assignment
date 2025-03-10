@@ -1,61 +1,73 @@
 import React, { useState } from 'react';
-import useRegister from '../hooks/useRegister';
+import axios from 'axios';
 
-const Register = () => {  // Ensure the function is properly defined
-    const { registerUser, loading, error, success } = useRegister();
+function Register() {
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    name: '',
+    roll_number: '',
+    hostel_number: '',
+  });
 
-    const [formData, setFormData] = useState({
-        username: '',
-        password: '',
-        name: '',
-        roll_number: '',
-        hostel_number: '',
-    });
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("Form Data Sent:", formData);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        registerUser(formData);
-    };
-
-    return (  // Make sure return is inside the function
-        <div className="register-container">
-            <h2>Register</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Username</label>
-                    <input type="text" name="username" value={formData.username} onChange={handleChange} required />
-                </div>
-                <div>
-                    <label>Password</label>
-                    <input type="password" name="password" value={formData.password} onChange={handleChange} required />
-                </div>
-                <div>
-                    <label>Name</label>
-                    <input type="text" name="name" value={formData.name} onChange={handleChange} required />
-                </div>
-                <div>
-                    <label>Roll Number</label>
-                    <input type="text" name="roll_number" value={formData.roll_number} onChange={handleChange} required />
-                </div>
-                <div>
-                    <label>Hostel Number</label>
-                    <input type="text" name="hostel_number" value={formData.hostel_number} onChange={handleChange} required />
-                </div>
-                <button type="submit" disabled={loading}>{loading ? 'Registering...' : 'Register'}</button>
-            </form>
-
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {success && <p style={{ color: 'green' }}>{success}</p>}
-        </div>
-    );
+    try {
+        const response = await axios.post(
+            'http://127.0.0.1:8000/api/auth/register/',
+            JSON.stringify(formData),
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        alert(response.data.message);
+    } catch (error) {
+        if (error.response) {
+            // Server responded with a status other than 2xx
+            console.error("Backend Error:", error.response.data);
+            alert(`Registration failed: ${JSON.stringify(error.response.data)}`);
+        } else if (error.request) {
+            // Request was made but no response received
+            console.error("No Response Received:", error.request);
+            alert('No response from the backend. Please check if the server is running.');
+        } else {
+            // Something else caused the error
+            console.error("Error:", error.message);
+            alert('An unknown error occurred. Please try again.');
+        }
+    }
 };
 
-export default Register;  // Ensure this is correctly placed at the end
+
+  return (
+    <div className="bg-white p-8 rounded shadow-md w-96">
+      <h2 className="text-2xl mb-4">Register</h2>
+      <form onSubmit={handleSubmit}>
+        {Object.keys(formData).map((key) => (
+          <div className="mb-4" key={key}>
+            <input
+              type={key === 'password' ? 'password' : 'text'}
+              name={key}
+              value={formData[key]}
+              onChange={handleChange}
+              placeholder={key}
+              className="w-full p-2 border rounded"
+            />
+          </div>
+        ))}
+        <button className="w-full p-2 bg-blue-500 text-white rounded">Register</button>
+      </form>
+    </div>
+  );
+}
+
+export default Register;

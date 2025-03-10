@@ -1,4 +1,3 @@
-// useRegister.js
 import { useState } from 'react';
 
 const useRegister = () => {
@@ -25,7 +24,7 @@ const useRegister = () => {
             if (response.ok) {
                 setSuccess('Registration successful! Check your email for verification.');
             } else {
-                setError(data.error || 'An error occurred during registration.');
+                setError(data.detail || 'An error occurred during registration.'); // Use 'detail' for error message
             }
         } catch (err) {
             setError('Something went wrong. Please try again later.');

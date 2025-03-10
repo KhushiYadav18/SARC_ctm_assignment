@@ -1,98 +1,44 @@
-import React from "react";
-import useProfile from "../hooks/useProfile";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-const Profile = () => {
-  const { ProfileData, handleChange, handleSubmit, loading } = useProfile();
+function Profile() {
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        navigate('/');
+        return;
+      }
+      
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/auth/profile/', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUser(response.data);
+      } catch (error) {
+        alert('Failed to fetch user profile');
+      }
+    };
+
+    fetchProfile();
+  }, [navigate]);
+
+  if (!user) return null;
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.title}>Profile</h2>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        {Object.keys(ProfileData).map((field) => (
-          <div key={field} style={styles.inputGroup}>
-            <label style={styles.label}>
-              {field.charAt(0).toUpperCase() + field.slice(1)}
-            </label>
-            {field === "gender" ? (
-              <select
-                name="gender"
-                value={ProfileData.gender}
-                onChange={handleChange}
-                style={styles.input}
-                required
-              >
-                <option value="">Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-              </select>
-            ) : (
-              <input
-                type={
-                  field === "email"
-                    ? "email"
-                    : field === "phone"
-                    ? "tel"
-                    : "text"
-                }
-                name={field}
-                value={ProfileData[field]}
-                onChange={handleChange}
-                style={styles.input}
-                required
-              />
-            )}
-          </div>
-        ))}
-        <button type="submit" style={styles.button} disabled={loading}>
-          {loading ? "Submitting..." : "Submit"}
-        </button>
-      </form>
+    <div className="bg-white p-8 rounded shadow-md w-96">
+      <h2 className="text-2xl mb-4">Profile</h2>
+      <div><strong>Name:</strong> {user.name}</div>
+      <div><strong>Roll Number:</strong> {user.roll_number}</div>
+      <div><strong>Email:</strong> {user.email}</div>
+      <div><strong>Hostel Number:</strong> {user.hostel_number}</div>
+      <div><strong>Verified:</strong> {user.is_verified ? 'Yes' : 'No'}</div>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    maxWidth: "400px",
-    margin: "auto",
-    padding: "20px",
-    border: "1px solid #ccc",
-    borderRadius: "8px",
-    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-    backgroundColor: "#fff",
-  },
-  title: {
-    textAlign: "center",
-    marginBottom: "20px",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-  },
-  inputGroup: {
-    marginBottom: "15px",
-  },
-  label: {
-    display: "block",
-    fontWeight: "bold",
-    marginBottom: "5px",
-  },
-  input: {
-    width: "100%",
-    padding: "8px",
-    border: "1px solid #ccc",
-    borderRadius: "4px",
-  },
-  button: {
-    width: "100%",
-    padding: "10px",
-    backgroundColor: "#007BFF",
-    color: "#fff",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-  },
-};
+}
 
 export default Profile;

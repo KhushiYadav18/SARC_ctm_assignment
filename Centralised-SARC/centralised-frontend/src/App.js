@@ -12,7 +12,7 @@ import Navbar from './components/Navbar';
 import Profile from './pages/profile';
 import Login from './pages/login';
 import Register from './pages/register'; 
-
+import VerifyEmail from './pages/VerifyEmail'
 
 const App = () => {
   return (
@@ -30,6 +30,7 @@ const App = () => {
         <Route path="/Profile" element={<Profile />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/Register" element={<Register />} />
+        <Route path="/verify-email/:token" element={<VerifyEmail />} />
       </Routes>
     </Router>
   );

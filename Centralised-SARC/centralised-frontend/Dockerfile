@@ -3,23 +3,23 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Copy the package.json and package-lock.json first for caching
+# Copy package files and install dependencies
 COPY package*.json ./
 
-# Clear npm cache and install dependencies without cache issues
+# Clear npm cache and install dependencies
 RUN npm cache clean --force
-RUN npm install --legacy-peer-deps
+RUN npm install
 
 # Check if react-scripts is properly installed
-RUN npm list react-scripts
+RUN npx react-scripts --version
 
 # Copy the rest of the application code
 COPY . .
 
-# Fix permissions before build
-RUN chmod -R 777 /app/node_modules/.bin && npm run build
+# Build the React application
+RUN npm run build
 
-# Expose the port
+# Expose the application port
 EXPOSE 3000
 
 # Start the application
