@@ -33,22 +33,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'    # ✅ Using Node 20.x to match your package requirements
 
       - name: Install frontend dependencies
         run: |
           cd Centralised-SARC/centralised-frontend
-          npm ci
-
-      - name: Fix Permissions
-        run: |
-          cd Centralised-SARC/centralised-frontend
-          chmod -R 755 node_modules
+          npm install   # 🔍 Use npm install instead of npm ci to update the lock file
 
       - name: Build frontend
         run: |
           cd Centralised-SARC/centralised-frontend
-          npx react-scripts build
+          npm run build
 
   deploy:
     runs-on: ubuntu-latest
