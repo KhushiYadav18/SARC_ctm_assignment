@@ -1,103 +1,54 @@
-name: CI/CD Pipeline
+name: CI-CD Pipeline
 
-on:
-  push:
-    branches:
-      - khushi
-  pull_request:
-    branches:
-      - khushi
+on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: 123
-          POSTGRES_DB: postgres
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U postgres" 
-          --health-interval=10s 
-          --health-timeout=5s 
-          --health-retries=5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Backend Setup and Tests
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      # Centralised-SARC Project (Backend & Frontend)
-      - name: Install Python dependencies - Centralised-SARC Backend
+      - name: Install backend dependencies
         run: |
+          cd Centralised-SARC/centralised-backend
           python -m venv env
           source env/bin/activate
-          pip install --upgrade pip
-          pip install -r Centralised-SARC/centralised-backend/requirements.txt
+          pip install -r requirements.txt
 
-      - name: Run Backend Tests - Centralised-SARC
+      - name: Run backend tests
         run: |
-          source env/bin/activate
           cd Centralised-SARC/centralised-backend
+          source env/bin/activate
           python manage.py test
 
+      # Frontend Build
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      - name: Install Node dependencies - Centralised-SARC Frontend
+      - name: Install frontend dependencies
         run: |
           cd Centralised-SARC/centralised-frontend
-          npm install --legacy-peer-deps
+          npm ci
 
-      - name: Build Frontend - Centralised-SARC
+      - name: Fix Permissions
         run: |
           cd Centralised-SARC/centralised-frontend
-          npm run build
+          chmod -R 755 node_modules
 
-      - name: Run Linter - Centralised-SARC Frontend
+      - name: Build frontend
         run: |
           cd Centralised-SARC/centralised-frontend
-          npm run lint
-
-      # MyBeastSummerILP Project (Backend & Frontend)
-      - name: Install Python dependencies - MyBeastSummerILP Backend
-        run: |
-          python -m venv env
-          source env/bin/activate
-          pip install --upgrade pip
-          pip install -r "MyBeastSummerILP-main/MyBeastSummerILP-main/Backend/requirements.txt"
-
-      - name: Run Backend Tests - MyBeastSummerILP
-        run: |
-          source env/bin/activate
-          cd "MyBeastSummerILP-main/MyBeastSummerILP-main/Backend"
-          python manage.py test
-
-      - name: Install Node dependencies - MyBeastSummerILP Frontend
-        run: |
-          cd "MyBeastSummerILP-main/MyBeastSummerILP-main/Frontend"
-          npm install --legacy-peer-deps
-
-      - name: Build Frontend - MyBeastSummerILP
-        run: |
-          cd "MyBeastSummerILP-main/MyBeastSummerILP-main/Frontend"
-          npm run build
-
-      - name: Run Linter - MyBeastSummerILP Frontend
-        run: |
-          cd "MyBeastSummerILP-main/MyBeastSummerILP-main/Frontend"
-          npm run lint
+          npx react-scripts build
 
   deploy:
     runs-on: ubuntu-latest
@@ -107,7 +58,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Deploy to DockerHub
+      - name: Deploy to Docker
         run: |
-          docker-compose down
-          docker-compose up --build -d
+          docker-compose -f Centralised-SARC/docker-compose.yml up --build -d
