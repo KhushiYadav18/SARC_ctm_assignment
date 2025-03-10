@@ -16,8 +16,8 @@ RUN npm list react-scripts
 # Copy the rest of the application code
 COPY . .
 
-# Build the React app
-RUN npm run build
+# Fix permissions before build
+RUN chmod -R 777 /app/node_modules/.bin && npm run build
 
 # Expose the port
 EXPOSE 3000
