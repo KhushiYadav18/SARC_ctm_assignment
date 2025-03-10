@@ -9,6 +9,9 @@ from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 import smtplib
 import os
+from django.views import View
+from django.http import JsonResponse
+
 
 class CreateUserAPIView(APIView):
     def post(self, request, format=None):
@@ -46,6 +49,17 @@ class TokenVerification(APIView):
             return Response("No user found, please signup",status=status.HTTP_400_BAD_REQUEST)
 
 
+class ProtectedView(View):
+    def get(self, request):
+        if not hasattr(request, 'auth_user'):
+            return JsonResponse({"error": "Unauthorized"}, status=401)
+
+        return JsonResponse({
+            "message": "Authenticated request successful",
+            "user": request.auth_user
+        })
+
+
 class Login(APIView):
     def post(self, request, format=None):
         try:
@@ -64,75 +78,30 @@ class Login(APIView):
 
 class ProfileView(APIView):
     def get(self, request, format=None):
-        accessToken = request.query_params.get('accessToken')
+        if not hasattr(request, 'auth_user'):
+            return Response({"error": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
         try:
-            user = User.objects.get(accessToken=accessToken)
-            if(user.is_active == False):
-                return Response({"error": "User not verified"}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            print("Error while fetching user", e)
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        print(user)
-        try:
+            user_data = request.auth_user  # This should now be accessible
+            user = User.objects.get(ldap=user_data['roll_number'])
             profile = Profile.objects.get(user=user)
             serializer = ProfileSerializer(profile)
-            return Response(serializer.data)
-        except Exception as e:
-            print("Error while fetching profile", e)
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-    def post(self, request, format=None):
-        accessToken = request.data['accessToken']
-        try:
-            user = User.objects.get(accessToken=accessToken)
-            if(user.is_active == False):
-                return Response({"error":"User not verified"}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            print("Error while fetching user", e)
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        print(user)
-        try:
-            request.data['user'] = user.id
-            if(not Profile.objects.filter(user=user)):
-                serializer = ProfileSerializer(data=request.data)
-            else:
-                profile = Profile.objects.get(user=user)
-                serializer = ProfileSerializer(profile, data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            else:
-                print("Error while updating profile", serializer.errors)
-                return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
-        except Exception as e:
-            print("Error while updating profile", e)
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        
-    def put(self, request, format=None):
-        accessToken = request.data['accessToken']
-        try:
-            user = User.objects.get(accessToken=accessToken)
-            if(user.is_active == False):
-                return Response({"error": "User not verified"}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            print("Error while fetching user", e)
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        print(user)
-        try:
-            profile = Profile.objects.get(user=user)
-            request.data['user'] = user.id
-            serializer = ProfileSerializer(profile, data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            else:
-                print("Error while updating profile", serializer.errors)
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            print("Error while updating profile", e)
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Profile.DoesNotExist:
+            return Response({"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
+class ProtectedView(View):
+    def get(self, request):
+        if not hasattr(request, 'auth_user'):
+            return JsonResponse({"error": "Unauthorized"}, status=401)
+
+        return JsonResponse({
+            "message": "Authenticated request successful",
+            "user": request.auth_user
+        })
 
 
 def send_sso_mail(

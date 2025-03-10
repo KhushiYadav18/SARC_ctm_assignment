@@ -13,7 +13,10 @@ class MiniUserSerializer(serializers.ModelSerializer):
         fields = ['ldap', 'fullname']
 
 class ProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.fullname', read_only=True)
+    roll_number = serializers.CharField(source='user.ldap', read_only=True)
+    
     class Meta:
         model = Profile
-        fields = '__all__'
-        
+        fields = ['id', 'personal_email', 'linkedin', 'resume_link', 'asc_ss_link', 
+                  'projects', 'internships', 'pors', 'user', 'username', 'roll_number']
