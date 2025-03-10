@@ -33,12 +33,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'    # ✅ Using Node 20.x to match your package requirements
+          node-version: '20'
 
       - name: Install frontend dependencies
         run: |
           cd Centralised-SARC/centralised-frontend
-          npm install   # 🔍 Use npm install instead of npm ci to update the lock file
+          npm install --legacy-peer-deps  # Ensure compatibility with dependencies
+          chmod -R 777 node_modules/.bin  # ✅ Give execute permissions to binaries
 
       - name: Build frontend
         run: |
