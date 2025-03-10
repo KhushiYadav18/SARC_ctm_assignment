@@ -3,10 +3,10 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main
+      - khushi
   pull_request:
     branches:
-      - main
+      - khushi
 
 jobs:
   build:
