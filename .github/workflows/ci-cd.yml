@@ -57,7 +57,7 @@ jobs:
       - name: Install Docker
         run: |
           sudo apt-get update
-          sudo apt-get install -y docker.io
+          sudo apt-get install -y docker.io  # Install docker instead of containerd.io
 
       - name: Install Docker Compose
         run: |
