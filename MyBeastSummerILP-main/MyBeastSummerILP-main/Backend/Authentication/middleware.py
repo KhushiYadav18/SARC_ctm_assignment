@@ -38,7 +38,7 @@ class TokenAuthenticationMiddleware:
                     'name': user_data.get('name'),
                     'roll_number': user_data.get('roll_number')
                 }
-                request.auth_user = minimal_user_data  # ✅ Set the user data on the request
+                request.auth_user = minimal_user_data  # ✅ Use a custom attribute instead of request.user
                 print(f"✅ User authenticated successfully: {minimal_user_data}")
             else:
                 print(f"❌ Token validation failed with status code {response.status_code}")

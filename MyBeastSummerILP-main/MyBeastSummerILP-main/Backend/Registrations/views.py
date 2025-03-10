@@ -44,55 +44,55 @@ class RegistrationAPIView(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import WishListSerializer
+from .models import WishList
+from Projects.models import Project
+from Projects.serializers import ProjectSerializer
 
 class WishListAPIView(APIView):
     def post(self, request):
-        accessToken = request.data['accessToken']
         try:
-            user = User.objects.get(accessToken=accessToken)
-            if(user.is_active == False):
-                return Response("User not verified", status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            print("Error while verifying user", e)
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        print(user)
-        try:
-            if(not WishList.objects.filter(user=user)[0]):
-                return Response(status=status.HTTP_404_NOT_FOUND)
+            user_data = request.auth_user  # Use the middleware-provided data
+            if not user_data:
+                return Response("User not authenticated", status=status.HTTP_401_UNAUTHORIZED)
             
-            wishlist = WishList.objects.get(user=user)
-            if(not wishlist.projects.filter(id=request.data['mentor'])):
+            roll_number = user_data['roll_number']
+            wishlist = WishList.objects.get(user__ldap=roll_number)
+
+            if not wishlist.projects.filter(id=request.data['mentor']).exists():
                 return Response("Mentor not in the wishlist", status=status.HTTP_404_NOT_FOUND)
+            
             wishlist.projects.remove(request.data['mentor'])
             wishlist.save()
-            return Response("Mentor deleted to wishlist", status=status.HTTP_200_OK)
+            return Response("Mentor deleted from wishlist", status=status.HTTP_200_OK)
+
+        except WishList.DoesNotExist:
+            return Response("Wishlist not found", status=status.HTTP_404_NOT_FOUND)
+
         except Exception as e:
             print("Error while updating wishlist", e)
-            return Response(status=status.HTTP_404_NOT_FOUND)
-    
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     def get(self, request):
         try:
-            accessToken = request.query_params.get('accessToken')
-            user = User.objects.get(accessToken=accessToken)
+            user_data = request.auth_user  # Use the middleware-provided data
+            if not user_data:
+                return Response("User not authenticated", status=status.HTTP_401_UNAUTHORIZED)
             
-            if not user.is_active:
-                return Response("User not verified", status=status.HTTP_400_BAD_REQUEST)
-            
-            wishlist = WishList.objects.get(user=user)
+            roll_number = user_data['roll_number']
+            wishlist = WishList.objects.get(user__ldap=roll_number)
             projects = []
 
             for mentor in wishlist.projects.all():
                 serializer = ProjectSerializer(mentor)
-                mentor_data = serializer.data;
+                mentor_data = serializer.data
                 mentor_data['wishlisted'] = True
                 projects.append(mentor_data)
-                
             
             return Response(projects, status=status.HTTP_200_OK)
-
-        except User.DoesNotExist:
-            return Response("User not found", status=status.HTTP_404_NOT_FOUND)
 
         except WishList.DoesNotExist:
             return Response("Wishlist not found", status=status.HTTP_404_NOT_FOUND)
@@ -100,32 +100,30 @@ class WishListAPIView(APIView):
         except Exception as e:
             print("Error while fetching wishlist", e)
             return Response("Internal server error", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
     
     def put(self, request):
-        accessToken = request.data['accessToken']
         try:
-            user = User.objects.get(accessToken=accessToken)
-            if(user.is_active == False):
-                return Response("User not verified", status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            print("Error while verifying user", e)
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        print(user)
-        try:
-            if(not WishList.objects.filter(user=user)):
-                wishlist = WishList.objects.create(user=user)
-            wishlist = WishList.objects.get(user=user)
-            if(wishlist.projects.filter(id=request.data['mentor'])):
+            user_data = request.auth_user  # Use the middleware-provided data
+            if not user_data:
+                return Response("User not authenticated", status=status.HTTP_401_UNAUTHORIZED)
+            
+            roll_number = user_data['roll_number']
+            wishlist, created = WishList.objects.get_or_create(user__ldap=roll_number)
+
+            if wishlist.projects.filter(id=request.data['mentor']).exists():
                 return Response("Mentor already in wishlist", status=status.HTTP_400_BAD_REQUEST)
-            wishlist.projects.add(request.data['mentor'])
+
+            mentor = Project.objects.get(id=request.data['mentor'])
+            wishlist.projects.add(mentor)
             wishlist.save()
             return Response("Mentor added to wishlist", status=status.HTTP_201_CREATED)
+
+        except Project.DoesNotExist:
+            return Response("Mentor not found", status=status.HTTP_404_NOT_FOUND)
+
         except Exception as e:
             print("Error while updating wishlist", e)
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        
-        
+            return Response("Internal server error", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 import csv
