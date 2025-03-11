@@ -8,16 +8,16 @@ COPY package*.json ./
 
 # Clear npm cache and install dependencies
 RUN npm cache clean --force
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Check if react-scripts is properly installed
-RUN npx react-scripts --version
+RUN npm list react-scripts
 
 # Copy the rest of the application code
 COPY . .
 
 # Build the React application
-RUN npm run build
+RUN chmod -R 777 /app/node_modules/.bin && npm run build
 
 # Expose the application port
 EXPOSE 3000
