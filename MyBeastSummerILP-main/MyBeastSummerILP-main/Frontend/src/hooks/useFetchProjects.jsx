@@ -22,7 +22,7 @@ const UseFetchProjects = () => {
             const csrfTokenMatch = document.cookie.match(/csrftoken=([^;]+)/);
             const csrfToken = csrfTokenMatch ? csrfTokenMatch[1] : 'DUMMY_CSRF_TOKEN';
 
-            axios.post(`http://127.0.0.1:8000/api/projects/`, userData , {
+            axios.post(`http://127.0.0.1:8001/api/projects/`, userData , {
                 headers: {
                     'Content-Type': 'application/json',
                     // Include CSRF token in headers

@@ -5,34 +5,31 @@ import { Navigate } from 'react-router-dom';
 
 function Login() {
   const [password, setPassword] = useState('');
-  const [rollNumber, setRollNumber] = useState('');
+  const [username, setUsername] = useState('');
 
   const allFieldsFilled = () => {
     return (
       password !== '' &&
-      rollNumber !== ''
+      username !== ''
     );
   };
+
   const { Login, error, setError, success, loading } = UseLogin();
 
   const handlePasswordChange = (event) => {setPassword(event.target.value); setError("")}
-  const handleRollNumberChange = (event) => {setRollNumber(event.target.value); setError("")};
-
+  const handleUsernameChange = (event) => {setUsername(event.target.value); setError("")};
 
   const handleLogin = () => {
     const userData = {
-      "ldap": rollNumber + '@iitb.ac.in',
+      "username": username,
       "password": password
     };
-
     Login(userData);
   };
 
   const inputStyle = ['input'];
   const buttonStyle = ['button'];
   const disabledButtonStyle = ['button', 'button-disabled'];
-
-  
 
   return (
     localStorage.getItem('accessToken') !== null ? <Navigate to="/projectCards" /> :
@@ -41,12 +38,11 @@ function Login() {
       <div className='email-input'>
         <input
           type="text"
-          placeholder="Roll Number"
-          value={rollNumber}
-          onChange={handleRollNumberChange}
+          placeholder="Username"
+          value={username}
+          onChange={handleUsernameChange}
           className={inputStyle.join(' ')}
         />
-        <span className='email-domain'>@iitb.ac.in</span>
       </div>
       <input
         type="password"

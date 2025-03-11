@@ -1,64 +1,38 @@
-import { useState, useCallback } from 'react';
-import { json } from 'react-router-dom';
-import Swal from 'sweetalert2';
+import { useState } from 'react';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const UseLogin = () => {
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    const Login = useCallback(async (userData) => {
+    const Login = async (userData) => {
         setLoading(true);
-        setError(null);
-        setSuccess(false);
-
         try {
-            // Get CSRF token from cookies
-            const csrfTokenMatch = document.cookie.match(/csrftoken=([^;]+)/);
-            const csrfToken = csrfTokenMatch ? csrfTokenMatch[1] : 'DUMMY_CSRF_TOKEN';
-            const response = await fetch('http://127.0.0.1:8000/api/authentication/login/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // Include CSRF token in headers
-                    'X-CSRFToken': csrfToken,
-                },
-                body: JSON.stringify(userData),
-            });
-
+            const response = await axios.post('http://127.0.0.1:8000/api/auth/login/', userData);
             if (response.status === 200) {
-                setSuccess(true);
-                const jsonData = await response.json();
-                localStorage.setItem('accessToken', jsonData['accessToken']);
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 2000,
-                    timerProgressBar: true,
-                })
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Successfully Signed in'
-                })
-            }
-            if (response.status === 400) {
-                const jsonData = await response.json();
-                setError(jsonData['error']);
-            }
-            if (response.status === 401) {
-                const jsonData = await response.json();
-                setError(jsonData['error']);
-            }
+                const { access, refresh } = response.data;
+                
+                localStorage.setItem('accessToken', access);
+                Cookies.set('accessToken', access, { expires: 7 });
+                Cookies.set('refreshToken', refresh, { expires: 7 });
 
-        } catch (err) {
-            setError(err.message);
+                setSuccess(true);
+                setError("");
+            }
+        } catch (error) {
+            if (error.response && error.response.data && error.response.data.detail) {
+                setError(error.response.data.detail);
+            } else {
+                setError("Login failed. Please try again.");
+            }
         } finally {
             setLoading(false);
         }
-    }, []);
+    }
 
-    return { Login, setError, loading, error, success };
-};
+    return { Login, error, setError, success, loading };
+}
 
 export default UseLogin;
